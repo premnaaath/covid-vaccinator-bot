@@ -85,7 +85,7 @@ Please enter your area Pincode."""
 
 @bot.message_handler(commands=["start"])
 def start(message):
-    bot.send_message(message.chat.id, greet_msg)
+    bot.reply_to(message, greet_msg)
 
 
 def temp(message):
@@ -96,25 +96,25 @@ def temp(message):
 def send_data(message):
     msg = get_data(message.text)
     if message.text in ["hi", "hello"]:
-        bot.send_message(message.chat.id, greet_msg)
+        bot.reply_to(message, greet_msg)
     elif len(msg) == 0:
         temp = """ 
 Sorry, there are no vaccines available near your locality for today!
 Please try again after sometime...
         """
-        bot.send_message(message.chat.id, temp)
+        bot.reply_to(message, temp)
     elif is_valid_pincode(message.text):
         for i in msg:
-            bot.send_message(message.chat.id, i)
+            bot.reply_to(message, i)
         text = """
 For Registration, please visit
 https://selfregistration.cowin.gov.in/
 
 Have a nice day! :)
         """
-        bot.send_message(message.chat.id, text=text)
+        bot.reply_to(message, text)
     else:
-        bot.send_message(message.chat.id, msg[0])
+        bot.reply_to(message, msg[0])
 
 
 @server.route("/" + TOKEN, methods=["POST"])
