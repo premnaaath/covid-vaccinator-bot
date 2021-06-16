@@ -5,15 +5,16 @@ import telebot
 API_KEY = key.API_KEY
 bot = telebot.TeleBot(API_KEY)
 
-
-@bot.message_handler(commands=["start"])
-def start(message):
-    msg = '''
+greet_msg = '''
 Hello there!
 I'm a bot designed to help you find a vaccine slot in your locality...
 
 Please enter your area Pincode.'''
-    bot.send_message(message.chat.id, msg)
+
+
+@bot.message_handler(commands=["start"])
+def start(message):
+    bot.send_message(message.chat.id, greet_msg)
 
 
 def temp(message):
@@ -23,7 +24,9 @@ def temp(message):
 @bot.message_handler(func=temp)
 def send_data(message):
     msg = get_data(message.text)
-    if len(msg) == 0:
+    if message.text in ['hi', 'hello']:
+        bot.send_message(message.chat.id, greet_msg)
+    elif len(msg) == 0:
         temp = ''' 
 Sorry, there are no vaccines available near your locality for today!
 Please try again after sometime...

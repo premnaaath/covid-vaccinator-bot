@@ -41,11 +41,11 @@ def generate_msg(data):
 Hospital Name: {}
 Address: {}
 Pincode: {}
-Age Group: {}+
+Age Limit: {}+
 Dose 1: {}
 Dose 2: {}
-Fee: Rs. {}
-Total Capacity: {}
+Fee in Rs: {}
+Availability Count: {}
 Working Time: {}
         """.format(i["name"], i["address"], i["pincode"], i["min_age_limit"], i["available_capacity_dose1"], i["available_capacity_dose2"], i["fee"], i["available_capacity"], "{} to {}".format(i["from"], i["to"]))
         message.append(msg)
