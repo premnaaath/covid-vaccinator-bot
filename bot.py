@@ -1,12 +1,11 @@
 import os
-import constants as key
-from get_data import get_data, is_valid_pincode
-from flask import Flask, request
 import telebot
+from flask import Flask, request
+from get_data import get_data, is_valid_pincode
 
-TOKEN = key.TOKEN
+TOKEN = "1871608505:AAHTk1het3w4dtxjPIEsz0N6A92aJ6eQBWQ"
 bot = telebot.TeleBot(TOKEN)
-app = Flask(__name__)
+server = Flask(__name__)
 
 greet_msg = """
 Hello there!
@@ -49,7 +48,7 @@ Have a nice day! :)
         bot.send_message(message.chat.id, msg[0])
 
 
-@app.route("/" + TOKEN, methods=["POST"])
+@server.route("/" + TOKEN, methods=["POST"])
 def getMessage():
     json_string = request.get_data().decode("utf-8")
     update = telebot.types.Update.de_json(json_string)
@@ -57,14 +56,12 @@ def getMessage():
     return "!", 200
 
 
-@app.route("/")
+@server.route("/")
 def webhook():
     bot.remove_webhook()
     bot.set_webhook(url="https://covid-vaccinator-bot.herokuapp.com/" + TOKEN)
     return "!", 200
 
 
-bot.polling()
-
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+    server.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
