@@ -1,90 +1,52 @@
-import os
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
-import logging
-from get_data import *
+import time
+import telebot
 import constants as keys
-PORT = int(os.environ.get('PORT', 5000))
+from get_data import get_data, is_valid_pincode
 
-# Enable logging
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                    level=logging.INFO)
+API_KEY = keys.API_KEY
+bot = telebot.TeleBot(API_KEY)
 
-logger = logging.getLogger(__name__)
-TOKEN = keys.API_KEY
+msg = dict()
 
-# Define a few command handlers. These usually take the two arguments update and
-# context. Error handlers also receive the raised TelegramError object in error.
-
-
-def start(update, context):
-    """Send a message when the command /start is issued."""
-    msg = '''
+msg["greet"] = '''
 Hello there!
 I'm a bot designed to help you find a vaccine slot in your locality...
 
 Please enter your area Pincode.'''
-    update.message.reply_text(msg)
 
-
-def error(update, context):
-    """Log Errors caused by Updates."""
-    logger.warning('Update "%s" caused error "%s"', update, context.error)
-
-
-def echo(update, context):
-    msg = get_data(update.message.text)
-    if len(msg) == 0:
-        temp = ''' 
+msg["nil"] = ''' 
 Sorry, there are no vaccines available near your locality for today!
-Please try again after sometime...
-        '''
-        update.message.reply_text(temp)
-    elif is_valid_pincode(message.text):
-        for i in msg:
-            bot.send_message(message.chat.id, i)
-        text = '''
+Please try again after sometime...'''
+
+msg["found"] = '''
 For Registration, please visit
 https://selfregistration.cowin.gov.in/
 
-Have a nice day! :)
-        '''
-        update.message.reply_text(text)
+Have a nice day! :)'''
+
+
+@bot.message_handler(commands=["start"])
+def start(message):
+    bot.send_message(message.chat.id, msg["greet"])
+
+
+@bot.message_handler(func=lambda *_: True)
+def send_data(message):
+    data = get_data(message.text)
+    if len(data) == 0:
+        bot.send_message(message.chat.id, msg["nil"])
+    elif is_valid_pincode(message.text):
+        string = ""
+        for i in data:
+            string += i
+        bot.send_message(message.chat.id, string)
+        bot.send_message(message.chat.id, msg["found"])
     else:
-        update.message.reply_text(msg[0])
+        bot.send_message(message.chat.id, data[0])
 
 
-def main():
-    """Start the bot."""
-    # Create the Updater and pass it your bot's token.
-    # Make sure to set use_context=True to use the new context based callbacks
-    # Post version 12 this will no longer be necessary
-    updater = Updater(TOKEN, use_context=True)
-
-    # Get the dispatcher to register handlers
-    dp = updater.dispatcher
-
-    # on different commands - answer in Telegram
-    dp.add_handler(CommandHandler("start", start))
-    dp.add_handler(CommandHandler("help", help))
-
-    # on noncommand i.e message - echo the message on Telegram
-    dp.add_handler(MessageHandler(Filters.text, echo))
-
-    # log all errors
-    dp.add_error_handler(error)
-
-    # Start the Bot
-    updater.start_webhook(listen="0.0.0.0",
-                          port=int(PORT),
-                          url_path=TOKEN)
-    updater.bot.setWebhook(
-        'https://covid-vaccinator-bot.herokuapp.com/' + TOKEN)
-
-    # Run the bot until you press Ctrl-C or the process receives SIGINT,
-    # SIGTERM or SIGABRT. This should be used most of the time, since
-    # start_polling() is non-blocking and will stop the bot gracefully.
-    updater.idle()
-
-
-if __name__ == '__main__':
-    main()
+while True:
+    try:
+        bot.polling(none_stop=True)
+    except Exception:
+        time.sleep(15)
