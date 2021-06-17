@@ -1,7 +1,6 @@
 from datetime import date
 import re
 import requests
-import json
 
 
 # covid_vaccinator_bot
