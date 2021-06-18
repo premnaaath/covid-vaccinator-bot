@@ -36,10 +36,8 @@ def send_data(message):
     if len(data) == 0:
         bot.send_message(message.chat.id, msg["nil"])
     elif is_valid_pincode(message.text):
-        string = ""
         for i in data:
-            string += i
-        bot.send_message(message.chat.id, string)
+            bot.send_message(message.chat.id, i)
         bot.send_message(message.chat.id, msg["found"])
     else:
         bot.send_message(message.chat.id, data[0])
