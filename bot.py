@@ -1,10 +1,14 @@
+import os
 import time
 import telebot
 import constants as keys
+from flask import Flask, request
 from get_data import get_data, is_valid_pincode
 
-API_KEY = keys.API_KEY
-bot = telebot.TeleBot(API_KEY)
+
+TOKEN = keys.TOKEN
+bot = telebot.TeleBot(TOKEN)
+server = Flask(__name__)
 
 msg = dict()
 
@@ -43,8 +47,20 @@ def send_data(message):
         bot.send_message(message.chat.id, data[0])
 
 
-while True:
-    try:
-        bot.polling(none_stop=True)
-    except Exception:
-        time.sleep(15)
+@server.route('/' + TOKEN, methods=['POST'])
+def getMessage():
+    json_string = request.get_data().decode('utf-8')
+    update = telebot.types.Update.de_json(json_string)
+    bot.process_new_updates([update])
+    return "!", 200
+
+
+@server.route("/")
+def webhook():
+    bot.remove_webhook()
+    bot.set_webhook(url='https://ancient-temple-78234.herokuapp.com/' + TOKEN)
+    return "!", 200
+
+
+if __name__ == "__main__":
+    server.run(host="0.0.0.0", port=int(os.environ.get('PORT', 5000)))
