@@ -2,7 +2,7 @@
 
 A telegram bot that helps you find a vaccine slot within your locality.
 
-Access this bot by searching '@covid_vaccinator_bot' in telegram.
+Access this bot [@covid_vaccinator_bot](https://telegram.me/covid_vaccinator_bot).
 
 ## Tools Used
 
