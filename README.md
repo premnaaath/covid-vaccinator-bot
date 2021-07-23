@@ -1,5 +1,7 @@
 # covid-vaccinator-bot
 
+## About
+
 A telegram bot that helps you find a vaccine slot within your locality.
 
 - Data Source: [API Setu](https://apisetu.gov.in/public/marketplace/api/cowin).
@@ -11,6 +13,6 @@ A telegram bot that helps you find a vaccine slot within your locality.
 - pyTelegramBotAPI
 - Flask
 
-## Demo Conversation
+## Screenshot
 
 ![demo](static/demo.png)
