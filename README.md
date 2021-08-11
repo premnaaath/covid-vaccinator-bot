@@ -13,6 +13,6 @@ A telegram bot that helps you find a vaccine slot within your locality.
 - pyTelegramBotAPI
 - Flask
 
-## Screenshot
+## Preview
 
 ![demo](static/demo.png)
